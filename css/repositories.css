@@ -1,299 +1,309 @@
-/* Repository detail page */
+/* Repository cards */
 
-.repository-hero {
-  padding: 44px 0 52px;
-  border-bottom: 1px solid var(--border);
-  background: radial-gradient(circle at top right, rgba(255,255,255,.05), transparent 32%);
-}
-
-.back-link {
-  display: inline-flex;
+.repository-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0,1fr) auto;
   align-items: center;
-  min-height: 40px;
-  color: var(--text-muted);
-  font-size: 13px;
-  font-weight: 700;
-  transition: color .16s ease;
-}
-
-.back-link:hover,
-.back-link:focus-visible {
+  gap: 20px;
+  min-height: 132px;
+  padding: 20px 22px;
   color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+  isolation: isolate;
+  transition: transform .18s ease, border-color .18s ease, background-color .18s ease, box-shadow .18s ease;
 }
 
-.repository-header {
-  display: flex;
-  align-items: center;
-  gap: 22px;
-  margin-top: 30px;
+.repository-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at 0 50%, rgba(255,255,255,.07), transparent 34%);
+  transition: opacity .18s ease;
 }
 
-.repository-header-icon {
-  width: 82px;
-  height: 82px;
+.repository-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-strong);
+  background: var(--surface-hover);
+  box-shadow: 0 16px 42px rgba(0,0,0,.26);
+}
+
+.repository-card:hover::before {
+  opacity: 1;
+}
+
+.repository-card:active {
+  transform: translateY(0);
+}
+
+.repository-card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.repository-card-icon {
+  width: 64px;
+  height: 64px;
   display: grid;
   place-items: center;
   flex: 0 0 auto;
   border: 1px solid var(--border-strong);
-  border-radius: 20px;
-  background: var(--surface);
-  font-size: 21px;
+  border-radius: 16px;
+  background: linear-gradient(145deg, rgba(255,255,255,.07), rgba(255,255,255,.02));
+  color: var(--text);
+  font-size: 16px;
   font-weight: 900;
   letter-spacing: .04em;
+  user-select: none;
 }
 
-.repository-header-content {
+.repository-card-content {
   min-width: 0;
-}
-
-.repository-header h1 {
-  font-size: clamp(2rem, 5vw, 3.8rem);
-  line-height: 1;
-  letter-spacing: -.045em;
-}
-
-.repository-header p {
-  max-width: 720px;
-  margin-top: 12px;
-  color: var(--text-soft);
-  font-size: 14px;
-}
-
-.repository-header-meta {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 14px;
+  flex-direction: column;
 }
 
-.repository-header-meta span {
+.repository-card-heading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.repository-card-name {
+  min-width: 0;
+  color: var(--text);
+  font-size: 18px;
+  font-weight: 750;
+  line-height: 1.2;
+  letter-spacing: -.02em;
+}
+
+.repository-card-type,
+.repository-card-source-count {
   display: inline-flex;
   align-items: center;
-  min-height: 26px;
-  padding: 0 10px;
+  min-height: 24px;
+  padding: 0 9px;
   border: 1px solid var(--border);
   border-radius: 999px;
   color: var(--text-muted);
   background: rgba(255,255,255,.025);
   font-size: 10px;
   font-weight: 800;
-  letter-spacing: .06em;
+  letter-spacing: .08em;
   text-transform: uppercase;
 }
 
-.extensions-section {
-  padding: 64px 0 80px;
+.repository-card-source-count {
+  letter-spacing: .03em;
 }
 
-.extension-list {
-  display: grid;
-  gap: 12px;
-}
-
-.extension-card {
-  display: grid;
-  grid-template-columns: auto minmax(0,1fr) auto;
-  align-items: center;
-  gap: 16px;
-  min-height: 100px;
-  padding: 18px 20px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background: var(--surface);
-  transition: transform .16s ease, background-color .16s ease, border-color .16s ease;
-}
-
-.extension-card:hover {
-  transform: translateY(-1px);
-  background: var(--surface-hover);
-  border-color: var(--border-strong);
-}
-
-.extension-icon {
-  width: 48px;
-  height: 48px;
-  display: grid;
-  place-items: center;
-  flex: 0 0 auto;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: rgba(255,255,255,.03);
-  font-size: 12px;
-  font-weight: 900;
-}
-
-.extension-content {
-  min-width: 0;
-}
-
-.extension-heading {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.extension-name {
-  font-size: 15px;
-  font-weight: 750;
-  line-height: 1.2;
-}
-
-.extension-version {
-  color: var(--text-muted);
-  font-size: 10px;
-  font-weight: 700;
-}
-
-.extension-description {
-  margin-top: 5px;
-  color: var(--text-soft);
-  font-size: 12px;
-  line-height: 1.5;
+.repository-card-description {
   display: -webkit-box;
+  max-width: 760px;
+  margin-top: 8px;
   overflow: hidden;
+  color: var(--text-soft);
+  font-size: 13px;
+  line-height: 1.55;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
 }
 
-.extension-meta {
+.repository-card-meta {
   display: flex;
+  align-items: center;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 8px;
+  gap: 10px;
+  margin-top: 12px;
 }
 
-.extension-meta span {
+.repository-card-count {
   color: var(--text-muted);
-  font-size: 10px;
-  font-weight: 650;
+  font-size: 11px;
+  font-weight: 700;
 }
 
-.extension-action {
-  width: 38px;
-  height: 38px;
+.repository-card-arrow {
+  width: 40px;
+  height: 40px;
   display: grid;
   place-items: center;
   flex: 0 0 auto;
   border: 1px solid var(--border);
   border-radius: 50%;
   color: var(--text-soft);
-  font-size: 16px;
+  background: rgba(255,255,255,.02);
+  font-size: 18px;
+  line-height: 1;
+  transition: transform .18s ease, color .18s ease, background-color .18s ease, border-color .18s ease;
 }
 
-.extension-empty {
-  padding: 48px 24px;
+.repository-card:hover .repository-card-arrow {
+  transform: translateX(3px);
+  border-color: var(--border-strong);
+  background: rgba(255,255,255,.06);
+  color: var(--text);
+}
+
+.repository-empty {
+  min-height: 180px;
+  display: grid;
+  place-items: center;
+  padding: 32px;
   border: 1px dashed var(--border-strong);
   border-radius: var(--radius-md);
   text-align: center;
 }
 
-.extension-empty h3 {
+.repository-empty h3 {
   font-size: 16px;
 }
 
-.extension-empty p {
+.repository-empty p {
   margin-top: 6px;
   color: var(--text-muted);
   font-size: 13px;
 }
 
-@media (max-width: 560px) {
-  .repository-hero {
-    padding: 32px 0 40px;
+@media (max-width: 820px) {
+  .repository-card {
+    gap: 16px;
+    min-height: 120px;
+    padding: 18px;
   }
 
-  .repository-header {
-    align-items: flex-start;
-    gap: 14px;
-    margin-top: 24px;
-  }
-
-  .repository-header-icon {
-    width: 54px;
-    height: 54px;
+  .repository-card-icon {
+    width: 56px;
+    height: 56px;
     border-radius: 14px;
     font-size: 14px;
   }
 
-  .repository-header h1 {
-    font-size: clamp(1.8rem, 10vw, 2.6rem);
+  .repository-card-name {
+    font-size: 17px;
   }
+}
 
-  .repository-header p {
-    margin-top: 8px;
-    font-size: 12px;
-  }
-
-  .extensions-section {
-    padding: 48px 0 64px;
-  }
-
-  .extension-card {
-    grid-template-columns: auto minmax(0,1fr) auto;
-    gap: 10px;
-    min-height: 88px;
+@media (max-width: 560px) {
+  .repository-card {
+    gap: 12px;
+    min-height: 104px;
     padding: 14px;
   }
 
-  .extension-icon {
+  .repository-card-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    font-size: 12px;
+  }
+
+  .repository-card-heading {
+    gap: 6px;
+  }
+
+  .repository-card-name {
+    font-size: 15px;
+  }
+
+  .repository-card-type,
+  .repository-card-source-count {
+    min-height: 21px;
+    padding: 0 7px;
+    font-size: 8px;
+  }
+
+  .repository-card-description {
+    margin-top: 5px;
+    font-size: 11px;
+  }
+
+  .repository-card-meta {
+    gap: 7px;
+    margin-top: 7px;
+  }
+
+  .repository-card-count {
+    font-size: 10px;
+  }
+
+  .repository-card-arrow {
+    width: 32px;
+    height: 32px;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 380px) {
+  .repository-card {
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .repository-card-icon {
     width: 40px;
     height: 40px;
     border-radius: 10px;
+  }
+
+  .repository-card-description {
     font-size: 10px;
   }
 
-  .extension-name {
-    font-size: 13px;
-  }
-
-  .extension-description {
-    font-size: 10px;
-  }
-
-  .extension-meta span {
-    font-size: 9px;
-  }
-
-  .extension-action {
-    width: 30px;
-    height: 30px;
+  .repository-card-arrow {
+    width: 28px;
+    height: 28px;
     font-size: 13px;
   }
 }
 
 @media (min-width: 1600px) {
-  .repository-hero {
-    padding: 64px 0 72px;
+  .repository-card {
+    min-height: 156px;
+    padding: 28px 30px;
+    gap: 24px;
   }
 
-  .repository-header {
-    gap: 28px;
-    margin-top: 38px;
+  .repository-card-icon {
+    width: 76px;
+    height: 76px;
+    border-radius: 18px;
+    font-size: 19px;
   }
 
-  .repository-header-icon {
-    width: 100px;
-    height: 100px;
-    border-radius: 24px;
-    font-size: 24px;
+  .repository-card-name {
+    font-size: 21px;
   }
 
-  .extension-card {
-    min-height: 118px;
-    padding: 22px 26px;
+  .repository-card-description {
+    margin-top: 10px;
+    font-size: 14px;
   }
 
-  .extension-icon {
-    width: 58px;
-    height: 58px;
-    border-radius: 14px;
+  .repository-card-count {
+    font-size: 12px;
+  }
+
+  .repository-card-arrow {
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .back-link,
-  .extension-card {
+  .repository-card,
+  .repository-card-arrow,
+  .repository-card::before {
     transition: none;
   }
 }
