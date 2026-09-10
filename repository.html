@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Browse extensions from an Extension Hub repository.">
+  <meta name="theme-color" content="#0b0d10">
+  <title>Repository | Extension Hub</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/repositories.css">
+  <link rel="stylesheet" href="css/repository.css">
+</head>
+<body>
+  <div class="app">
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="./" aria-label="Extension Hub home">
+          <span class="brand-mark" aria-hidden="true">EH</span>
+          <span class="brand-text"><strong>Extension Hub</strong><small>Repositories & Extensions</small></span>
+        </a>
+        <nav class="site-nav" aria-label="Main navigation">
+          <a href="./">Repositories</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="repository-hero">
+        <div class="container">
+          <a class="back-link" href="./">← Back to repositories</a>
+          <div id="repository-header" class="repository-header" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section class="extensions-section">
+        <div class="container">
+          <div class="section-heading">
+            <div><span class="eyebrow">Directory</span><h2>Extensions</h2></div>
+            <p id="extension-summary">Loading extensions...</p>
+          </div>
+          <div id="extension-list" class="extension-list" aria-live="polite" aria-busy="true"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <span>Extension Hub</span>
+        <span>Built for GitHub Pages</span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="data/repositories.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/repository.js"></script>
+</body>
+</html>
