@@ -9,6 +9,8 @@ const repositories = [
     icon: "CS",
     accent: "neutral",
     source: { owner: "", name: "", branch: "main" },
+    url: "",
+    homepage: "",
     extensions: extensionData.cloudstream
   },
   {
@@ -19,6 +21,8 @@ const repositories = [
     icon: "MI",
     accent: "neutral",
     source: { owner: "", name: "", branch: "main" },
+    url: "",
+    homepage: "",
     extensions: extensionData.mihon
   },
   {
@@ -29,11 +33,10 @@ const repositories = [
     icon: "AN",
     accent: "neutral",
     source: { owner: "", name: "", branch: "main" },
+    url: "",
+    homepage: "",
     extensions: extensionData.aniyomi
   }
 ];
 
-const repositoryConfig = {
-  version: 1,
-  repositories
-};
+const repositoryConfig = { version: 1, repositories };
