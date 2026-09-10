@@ -8,8 +8,9 @@ const DataLoader = {
   },
 
   getJSONFallback(source) {
-    if (!source.endsWith("index.pb")) return null;
-    return source.replace(/index\.pb$/, "index.min.json");
+    return source.endsWith("index.pb")
+      ? source.replace(/index\.pb$/, "index.min.json")
+      : null;
   },
 
   async fetchURL(url) {
@@ -23,45 +24,42 @@ const DataLoader = {
     const fallback = this.getJSONFallback(url);
 
     if (fallback) {
-      try {
-        return await this.fetchURL(fallback);
-      } catch {
-        return await this.fetchURL(url);
-      }
+      try { return await this.fetchURL(fallback); }
+      catch { return await this.fetchURL(url); }
     }
 
-    return await this.fetchURL(url);
+    return this.fetchURL(url);
   },
 
   parse(text) {
-    const value = text.trim();
-
-    try {
-      return { format: "json", data: JSON.parse(value) };
-    } catch {
-      return { format: "text", raw: value };
-    }
+    try { return JSON.parse(text.trim()); }
+    catch { return null; }
   },
 
   normalize(item = {}, source = "") {
+    const languages = item.languages || item.lang || [];
+    const nested = Array.isArray(item.sources) ? item.sources : [];
+    const nestedURL = nested[0]?.baseUrl || "";
+
     return {
       id: item.id || item.pkg || item.packageName || item.name || crypto.randomUUID(),
       name: item.name || item.title || item.pkg || "Unnamed extension",
       version: item.version || item.versionName || "",
       description: item.description || item.desc || "",
       icon: item.icon || item.logo || "EX",
-      languages: Array.isArray(item.languages) ? item.languages : [],
-      url: item.url || item.website || "",
+      languages: Array.isArray(languages) ? languages : [languages],
+      url: item.url || item.website || nestedURL,
+      packageName: item.pkg || item.packageName || "",
+      apk: item.apk || "",
+      nsfw: Boolean(item.nsfw),
       source
     };
   },
 
   extractJSON(data, source) {
-    if (!data) return [];
-
     const items = Array.isArray(data)
       ? data
-      : data.extensions || data.sources || data.providers || data.entries || [];
+      : data?.extensions || data?.sources || data?.providers || data?.entries || [];
 
     return Array.isArray(items)
       ? items.map(item => this.normalize(item, source))
@@ -79,11 +77,9 @@ const DataLoader = {
       if (result.status !== "fulfilled") return;
 
       const source = repository.sources[index];
-      const parsed = this.parse(result.value.text);
+      const data = this.parse(result.value.text);
 
-      if (parsed.format === "json") {
-        extensions.push(...this.extractJSON(parsed.data, source));
-      }
+      if (data) extensions.push(...this.extractJSON(data, source));
     });
 
     repository.extensions = this.unique(extensions);
@@ -94,7 +90,7 @@ const DataLoader = {
     const seen = new Set();
 
     return items.filter(item => {
-      const key = item.id || `${item.name}:${item.url}`;
+      const key = item.packageName || item.id || `${item.name}:${item.url}`;
       if (seen.has(key)) return false;
       seen.add(key);
       return true;
