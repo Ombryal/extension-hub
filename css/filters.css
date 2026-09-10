@@ -1,0 +1,68 @@
+.extension-tools {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.extension-search {
+  width: 100%;
+  min-height: 46px;
+  padding: 0 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  outline: none;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  transition: border-color .16s ease, background-color .16s ease;
+}
+
+.extension-search::placeholder {
+  color: var(--text-muted);
+}
+
+.extension-search:focus {
+  border-color: var(--border-strong);
+  background: var(--surface-hover);
+}
+
+.extension-filter {
+  min-height: 46px;
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  outline: none;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.extension-filter:focus {
+  border-color: var(--border-strong);
+}
+
+.filter-results {
+  margin-bottom: 16px;
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+@media (max-width: 560px) {
+  .extension-tools {
+    grid-template-columns: 1fr;
+  }
+
+  .extension-search,
+  .extension-filter {
+    min-height: 42px;
+    font-size: 12px;
+  }
+
+  .filter-results {
+    font-size: 10px;
+  }
+}
