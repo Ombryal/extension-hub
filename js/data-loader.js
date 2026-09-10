@@ -7,17 +7,34 @@ const DataLoader = {
       : source;
   },
 
-  async fetchSource(source) {
-    const url = this.toURL(source);
+  getJSONFallback(source) {
+    if (!source.endsWith("index.pb")) return null;
+    return source.replace(/index\.pb$/, "index.min.json");
+  },
+
+  async fetchURL(url) {
     const response = await fetch(url, { cache: "no-store" });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     return { url, text: await response.text() };
   },
 
-  parse(text, source) {
-    const value = text.trim();
+  async fetchSource(source) {
+    const url = this.toURL(source);
+    const fallback = this.getJSONFallback(url);
 
-    if (source.endsWith(".pb")) return { format: "protobuf", raw: value };
+    if (fallback) {
+      try {
+        return await this.fetchURL(fallback);
+      } catch {
+        return await this.fetchURL(url);
+      }
+    }
+
+    return await this.fetchURL(url);
+  },
+
+  parse(text) {
+    const value = text.trim();
 
     try {
       return { format: "json", data: JSON.parse(value) };
@@ -62,7 +79,7 @@ const DataLoader = {
       if (result.status !== "fulfilled") return;
 
       const source = repository.sources[index];
-      const parsed = this.parse(result.value.text, source);
+      const parsed = this.parse(result.value.text);
 
       if (parsed.format === "json") {
         extensions.push(...this.extractJSON(parsed.data, source));
