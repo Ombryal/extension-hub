@@ -21,6 +21,7 @@
     <title>Extension Hub</title>
 
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/repositories.css">
 </head>
 
 <body>
@@ -29,14 +30,24 @@
         <header class="site-header">
             <div class="container header-inner">
 
-                <a class="brand" href="./" aria-label="Extension Hub home">
-                    <span class="brand-mark" aria-hidden="true">
+                <a
+                    class="brand"
+                    href="./"
+                    aria-label="Extension Hub home"
+                >
+                    <span
+                        class="brand-mark"
+                        aria-hidden="true"
+                    >
                         EH
                     </span>
 
                     <span class="brand-text">
                         <strong>Extension Hub</strong>
-                        <small>Repositories & Extensions</small>
+
+                        <small>
+                            Repositories & Extensions
+                        </small>
                     </span>
                 </a>
 
@@ -128,8 +139,19 @@
                         id="repository-list"
                         class="repository-list"
                         aria-live="polite"
+                        aria-busy="true"
                     >
-                        <!-- Repository cards will be rendered here -->
+                        <div class="repository-empty">
+                            <div>
+                                <h3>
+                                    Loading repositories
+                                </h3>
+
+                                <p>
+                                    Preparing the directory...
+                                </p>
+                            </div>
+                        </div>
                     </div>
 
                 </div>
@@ -177,6 +199,32 @@
 
     </div>
 
+    <script src="data/repositories.js"></script>
     <script src="js/app.js"></script>
+    <script src="js/repositories.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const repositoryList =
+                document.querySelector("#repository-list");
+
+            if (
+                repositoryList &&
+                typeof RepositoryView !== "undefined" &&
+                typeof repositories !== "undefined"
+            ) {
+                RepositoryView.render(
+                    repositoryList,
+                    repositories
+                );
+
+                repositoryList.setAttribute(
+                    "aria-busy",
+                    "false"
+                );
+            }
+        });
+    </script>
+
 </body>
 </html>
