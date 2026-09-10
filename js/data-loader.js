@@ -3,7 +3,7 @@
 const DataLoader = {
   toURL(source) {
     return source.startsWith("cloudstreamrepo://")
-      ? source.replace("cloudstreamrepo://", "https://")
+      ? source.slice("cloudstreamrepo://".length)
       : source;
   },
 
