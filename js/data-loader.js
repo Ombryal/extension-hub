@@ -10,38 +10,19 @@ const DataLoader = {
   async fetchSource(source) {
     const url = this.toURL(source);
     const response = await fetch(url, { cache: "no-store" });
-
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
-
-    return {
-      url,
-      text: await response.text()
-    };
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return { url, text: await response.text() };
   },
 
   parse(text, source) {
-    const trimmed = text.trim();
-    const isPB = source.endsWith(".pb");
+    const value = text.trim();
 
-    if (isPB) {
-      return {
-        format: "protobuf",
-        raw: trimmed
-      };
-    }
+    if (source.endsWith(".pb")) return { format: "protobuf", raw: value };
 
     try {
-      return {
-        format: "json",
-        data: JSON.parse(trimmed)
-      };
+      return { format: "json", data: JSON.parse(value) };
     } catch {
-      return {
-        format: "text",
-        raw: trimmed
-      };
+      return { format: "text", raw: value };
     }
   },
 
@@ -61,15 +42,13 @@ const DataLoader = {
   extractJSON(data, source) {
     if (!data) return [];
 
-    const items =
-      Array.isArray(data) ? data :
-      Array.isArray(data.extensions) ? data.extensions :
-      Array.isArray(data.sources) ? data.sources :
-      Array.isArray(data.providers) ? data.providers :
-      Array.isArray(data.entries) ? data.entries :
-      [];
+    const items = Array.isArray(data)
+      ? data
+      : data.extensions || data.sources || data.providers || data.entries || [];
 
-    return items.map(item => this.normalize(item, source));
+    return Array.isArray(items)
+      ? items.map(item => this.normalize(item, source))
+      : [];
   },
 
   async loadRepository(repository) {
@@ -90,7 +69,8 @@ const DataLoader = {
       }
     });
 
-    return this.unique(extensions);
+    repository.extensions = this.unique(extensions);
+    return repository.extensions;
   },
 
   unique(items) {
@@ -98,29 +78,16 @@ const DataLoader = {
 
     return items.filter(item => {
       const key = item.id || `${item.name}:${item.url}`;
-
       if (seen.has(key)) return false;
-
       seen.add(key);
       return true;
     });
   },
 
   async loadAll() {
-    const results = await Promise.all(
-      repositories.map(async repository => ({
-        id: repository.id,
-        extensions: await this.loadRepository(repository)
-      }))
+    await Promise.allSettled(
+      repositories.map(repository => this.loadRepository(repository))
     );
-
-    results.forEach(result => {
-      const repository = repositories.find(item => item.id === result.id);
-
-      if (repository) {
-        repository.extensions = result.extensions;
-      }
-    });
 
     return repositories;
   }
