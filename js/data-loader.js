@@ -39,16 +39,15 @@ const DataLoader = {
   normalize(item = {}, source = "") {
     const languages = item.languages || item.lang || [];
     const nested = Array.isArray(item.sources) ? item.sources : [];
-    const nestedURL = nested[0]?.baseUrl || "";
 
     return {
-      id: item.id || item.pkg || item.packageName || item.name || crypto.randomUUID(),
+      id: item.id || item.pkg || item.packageName || item.internalName || item.name || crypto.randomUUID(),
       name: item.name || item.title || item.pkg || "Unnamed extension",
       version: item.version || item.versionName || "",
-      description: item.description || item.desc || "",
-      icon: item.icon || item.logo || "EX",
+      description: item.description || item.desc || item.about || "",
+      icon: item.icon || item.logo || item.iconUrl || "EX",
       languages: Array.isArray(languages) ? languages : [languages],
-      url: item.url || item.website || nestedURL,
+      url: item.url || item.website || item.repo || nested[0]?.baseUrl || "",
       packageName: item.pkg || item.packageName || "",
       apk: item.apk || "",
       nsfw: Boolean(item.nsfw),
@@ -56,14 +55,40 @@ const DataLoader = {
     };
   },
 
-  extractJSON(data, source) {
-    const items = Array.isArray(data)
-      ? data
-      : data?.extensions || data?.sources || data?.providers || data?.entries || [];
+  async extract(data, source) {
+    if (!data) return [];
 
-    return Array.isArray(items)
-      ? items.map(item => this.normalize(item, source))
-      : [];
+    if (Array.isArray(data)) {
+      return data.map(item => this.normalize(item, source));
+    }
+
+    const results = [];
+    const items = data.extensions || data.sources || data.providers || data.entries;
+
+    if (Array.isArray(items)) {
+      results.push(...items.map(item => this.normalize(item, source)));
+    }
+
+    if (Array.isArray(data.pluginLists)) {
+      const nested = await Promise.allSettled(
+        data.pluginLists.map(url => this.fetchSource(url))
+      );
+
+      for (const result of nested) {
+        if (result.status !== "fulfilled") continue;
+
+        const parsed = this.parse(result.value.text);
+        results.push(...await this.extract(parsed, result.value.url));
+      }
+    }
+
+    if (Array.isArray(data.plugins)) {
+      results.push(
+        ...data.plugins.map(item => this.normalize(item, source))
+      );
+    }
+
+    return results;
   },
 
   async loadRepository(repository) {
@@ -73,14 +98,19 @@ const DataLoader = {
 
     const extensions = [];
 
-    results.forEach((result, index) => {
-      if (result.status !== "fulfilled") return;
+    for (let i = 0; i < results.length; i++) {
+      const result = results[i];
+      if (result.status !== "fulfilled") continue;
 
-      const source = repository.sources[index];
+      const source = repository.sources[i];
       const data = this.parse(result.value.text);
 
-      if (data) extensions.push(...this.extractJSON(data, source));
-    });
+      if (data) {
+        extensions.push(
+          ...await this.extract(data, source)
+        );
+      }
+    }
 
     repository.extensions = this.unique(extensions);
     return repository.extensions;
