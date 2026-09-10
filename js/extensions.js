@@ -14,9 +14,7 @@ const ExtensionView = {
       return;
     }
 
-    container.innerHTML = extensions
-      .map(extension => this.card(extension))
-      .join("");
+    container.innerHTML = extensions.map(extension => this.card(extension)).join("");
   },
 
   card(extension) {
@@ -27,12 +25,25 @@ const ExtensionView = {
     const version = extension.version
       ? `<span class="extension-version">v${App.escapeHTML(extension.version)}</span>`
       : "";
+
     const languages = Array.isArray(extension.languages)
-      ? extension.languages.filter(Boolean).join(" · ")
-      : "";
-    const meta = languages
-      ? `<div class="extension-meta"><span>${App.escapeHTML(languages)}</span></div>`
-      : "";
+      ? extension.languages.filter(Boolean)
+      : [];
+
+    const authors = Array.isArray(extension.authors)
+      ? extension.authors.filter(Boolean)
+      : [];
+
+    const types = Array.isArray(extension.tvTypes)
+      ? extension.tvTypes.filter(Boolean)
+      : [];
+
+    const meta = [
+      languages.length ? languages.join(" · ") : "",
+      authors.length ? `by ${authors.join(", ")}` : "",
+      types.length ? types.join(" · ") : ""
+    ].filter(Boolean);
+
     const url = extension.url || "#";
     const external = extension.url
       ? ' target="_blank" rel="noopener noreferrer"'
@@ -51,7 +62,12 @@ const ExtensionView = {
           </div>
 
           <p class="extension-description">${description}</p>
-          ${meta}
+
+          ${meta.length ? `
+            <div class="extension-meta">
+              ${meta.map(item => `<span>${App.escapeHTML(item)}</span>`).join("")}
+            </div>
+          ` : ""}
         </div>
 
         <a
