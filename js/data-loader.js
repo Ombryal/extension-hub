@@ -7,6 +7,14 @@ const DataLoader = {
       : source;
   },
 
+  resolveURL(value, base = "") {
+    try {
+      return new URL(value, base).href;
+    } catch {
+      return value;
+    }
+  },
+
   getJSONFallback(source) {
     return source.endsWith("index.pb")
       ? source.replace(/index\.pb$/, "index.min.json")
@@ -19,8 +27,8 @@ const DataLoader = {
     return { url, text: await response.text() };
   },
 
-  async fetchSource(source) {
-    const url = this.toURL(source);
+  async fetchSource(source, base = "") {
+    const url = this.resolveURL(this.toURL(source), base);
     const fallback = this.getJSONFallback(url);
 
     if (!fallback) return this.fetchURL(url);
@@ -84,7 +92,7 @@ const DataLoader = {
 
     if (Array.isArray(data.pluginLists)) {
       const nested = await Promise.allSettled(
-        data.pluginLists.map(url => this.fetchSource(url))
+        data.pluginLists.map(url => this.fetchSource(url, source))
       );
 
       for (const result of nested) {
@@ -127,7 +135,7 @@ const DataLoader = {
       });
 
       const data = this.parse(result.value.text);
-      if (data) extensions.push(...await this.extract(data, source));
+      if (data) extensions.push(...await this.extract(data, result.value.url));
     }
 
     repository.extensions = this.unique(extensions);
