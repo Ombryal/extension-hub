@@ -1,176 +1,156 @@
 "use strict";
 
-/**
- * Repository rendering layer.
- *
- * This file turns the repository configuration into the horizontal
- * cards displayed on the homepage.
- */
+const RepositoryPage = {
+  getRepositoryId() {
+    return new URLSearchParams(window.location.search).get("id");
+  },
 
-const RepositoryView = {
-    /**
-     * Render all repositories into the repository list.
-     *
-     * @param {HTMLElement} container
-     * @param {Array} repositoryData
-     */
-    render(container, repositoryData) {
-        if (!container) {
-            return;
-        }
+  findRepository(id) {
+    return repositories.find(repository => repository.id === id);
+  },
 
-        container.innerHTML = "";
+  render(repository) {
+    const header = App.select("#repository-header");
+    const list = App.select("#extension-list");
+    const summary = App.select("#extension-summary");
 
-        if (!Array.isArray(repositoryData) || repositoryData.length === 0) {
-            this.renderEmptyState(container);
-            return;
-        }
+    if (!header || !list || !summary) return;
 
-        const fragment = document.createDocumentFragment();
-
-        repositoryData.forEach((repository) => {
-            fragment.appendChild(
-                this.createCard(repository)
-            );
-        });
-
-        container.appendChild(fragment);
-    },
-
-    /**
-     * Create a repository card.
-     *
-     * @param {Object} repository
-     * @returns {HTMLElement}
-     */
-    createCard(repository) {
-        const card = App.createElement("a", "repository-card");
-
-        card.href = this.getRepositoryURL(repository);
-
-        card.setAttribute(
-            "aria-label",
-            `Open ${repository.name} repository`
-        );
-
-        const icon = App.createElement(
-            "div",
-            "repository-card-icon"
-        );
-
-        icon.setAttribute("aria-hidden", "true");
-        icon.textContent = repository.icon || "EH";
-
-        const content = App.createElement(
-            "div",
-            "repository-card-content"
-        );
-
-        const heading = App.createElement(
-            "div",
-            "repository-card-heading"
-        );
-
-        const name = App.createElement(
-            "h3",
-            "repository-card-name"
-        );
-
-        name.textContent = repository.name;
-
-        const type = App.createElement(
-            "span",
-            "repository-card-type"
-        );
-
-        type.textContent = repository.type || "Repository";
-
-        heading.appendChild(name);
-        heading.appendChild(type);
-
-        const description = App.createElement(
-            "p",
-            "repository-card-description"
-        );
-
-        description.textContent =
-            repository.description || "";
-
-        const meta = App.createElement(
-            "div",
-            "repository-card-meta"
-        );
-
-        const extensionCount = App.createElement(
-            "span",
-            "repository-card-count"
-        );
-
-        const count = Array.isArray(repository.extensions)
-            ? repository.extensions.length
-            : 0;
-
-        extensionCount.textContent =
-            `${count} ${count === 1 ? "extension" : "extensions"}`;
-
-        const arrow = App.createElement(
-            "span",
-            "repository-card-arrow"
-        );
-
-        arrow.setAttribute("aria-hidden", "true");
-        arrow.textContent = "→";
-
-        meta.appendChild(extensionCount);
-
-        content.appendChild(heading);
-        content.appendChild(description);
-        content.appendChild(meta);
-
-        card.appendChild(icon);
-        card.appendChild(content);
-        card.appendChild(arrow);
-
-        return card;
-    },
-
-    /**
-     * Build the internal repository page URL.
-     *
-     * @param {Object} repository
-     * @returns {string}
-     */
-    getRepositoryURL(repository) {
-        return `repository.html?id=${encodeURIComponent(repository.id)}`;
-    },
-
-    /**
-     * Render a fallback when no repositories are available.
-     *
-     * @param {HTMLElement} container
-     */
-    renderEmptyState(container) {
-        const state = App.createElement(
-            "div",
-            "repository-empty"
-        );
-
-        const title = App.createElement(
-            "h3"
-        );
-
-        title.textContent = "No repositories available";
-
-        const description = App.createElement(
-            "p"
-        );
-
-        description.textContent =
-            "There are currently no repositories configured.";
-
-        state.appendChild(title);
-        state.appendChild(description);
-
-        container.appendChild(state);
+    if (!repository) {
+      this.renderNotFound(header, list, summary);
+      return;
     }
+
+    document.title = `${repository.name} | Extension Hub`;
+
+    header.innerHTML = `
+      <div class="repository-header-icon" aria-hidden="true">
+        ${App.escapeHTML(repository.icon || "EH")}
+      </div>
+      <div class="repository-header-content">
+        <h1>${App.escapeHTML(repository.name)}</h1>
+        <p>${App.escapeHTML(repository.description || "")}</p>
+        <div class="repository-header-meta">
+          <span>${App.escapeHTML(repository.type || "Repository")}</span>
+          <span>${repository.extensions.length} extensions</span>
+        </div>
+      </div>
+    `;
+
+    summary.textContent =
+      `${repository.extensions.length} ${repository.extensions.length === 1 ? "extension" : "extensions"}`;
+
+    this.renderExtensions(list, repository.extensions);
+    list.setAttribute("aria-busy", "false");
+  },
+
+  renderExtensions(container, extensions) {
+    container.innerHTML = "";
+
+    if (!extensions.length) {
+      container.innerHTML = `
+        <div class="extension-empty">
+          <h3>No extensions available</h3>
+          <p>This repository does not have extension data yet.</p>
+        </div>
+      `;
+      return;
+    }
+
+    const fragment = document.createDocumentFragment();
+
+    extensions.forEach(extension => {
+      fragment.appendChild(this.createExtensionCard(extension));
+    });
+
+    container.appendChild(fragment);
+  },
+
+  createExtensionCard(extension) {
+    const card = document.createElement("article");
+    card.className = "extension-card";
+
+    const languages = Array.isArray(extension.languages)
+      ? extension.languages.join(" · ")
+      : "";
+
+    card.innerHTML = `
+      <div class="extension-icon" aria-hidden="true">
+        ${App.escapeHTML(extension.icon || "EX")}
+      </div>
+
+      <div class="extension-content">
+        <div class="extension-heading">
+          <h3 class="extension-name">
+            ${App.escapeHTML(extension.name || "Unnamed extension")}
+          </h3>
+
+          ${
+            extension.version
+              ? `<span class="extension-version">v${App.escapeHTML(extension.version)}</span>`
+              : ""
+          }
+        </div>
+
+        <p class="extension-description">
+          ${App.escapeHTML(extension.description || "No description available.")}
+        </p>
+
+        ${
+          languages
+            ? `
+              <div class="extension-meta">
+                <span>${App.escapeHTML(languages)}</span>
+              </div>
+            `
+            : ""
+        }
+      </div>
+
+      <a
+        class="extension-action"
+        href="${App.escapeHTML(extension.url || "#")}"
+        ${extension.url ? 'target="_blank" rel="noopener noreferrer"' : ""}
+        aria-label="Open ${App.escapeHTML(extension.name || "extension")}"
+      >
+        →
+      </a>
+    `;
+
+    return card;
+  },
+
+  renderNotFound(header, list, summary) {
+    document.title = "Repository Not Found | Extension Hub";
+
+    header.innerHTML = `
+      <div class="repository-header-icon" aria-hidden="true">?</div>
+      <div class="repository-header-content">
+        <h1>Repository not found</h1>
+        <p>The requested repository does not exist in this directory.</p>
+      </div>
+    `;
+
+    summary.textContent = "No repository";
+
+    list.innerHTML = `
+      <div class="extension-empty">
+        <h3>Nothing to show here</h3>
+        <p>Return to the repository directory and choose a valid repository.</p>
+      </div>
+    `;
+
+    list.setAttribute("aria-busy", "false");
+  },
+
+  init() {
+    const id = this.getRepositoryId();
+    const repository = this.findRepository(id);
+
+    this.render(repository);
+  }
 };
+
+document.addEventListener("DOMContentLoaded", () => {
+  RepositoryPage.init();
+});
