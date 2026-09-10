@@ -99,6 +99,8 @@ const DataLoader = {
   },
 
   async loadRepository(repository) {
+    repository.sourceStatus = [];
+
     const results = await Promise.allSettled(
       repository.sources.map(source => this.fetchSource(source))
     );
@@ -106,11 +108,25 @@ const DataLoader = {
     const extensions = [];
 
     for (let i = 0; i < results.length; i++) {
-      if (results[i].status !== "fulfilled") continue;
-
       const source = repository.sources[i];
-      const data = this.parse(results[i].value.text);
+      const result = results[i];
 
+      if (result.status !== "fulfilled") {
+        repository.sourceStatus.push({
+          source,
+          status: "error",
+          error: result.reason?.message || "Failed to load source"
+        });
+        continue;
+      }
+
+      repository.sourceStatus.push({
+        source,
+        status: "online",
+        url: result.value.url
+      });
+
+      const data = this.parse(result.value.text);
       if (data) extensions.push(...await this.extract(data, source));
     }
 
