@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="css/repository.css">
   <link rel="stylesheet" href="css/loading.css">
   <link rel="stylesheet" href="css/states.css">
+  <link rel="stylesheet" href="css/filters.css">
 </head>
 <body>
   <div class="app">
@@ -44,6 +45,27 @@
             </div>
             <p id="extension-summary">Loading extensions...</p>
           </div>
+
+          <div class="extension-tools">
+            <input
+              id="extension-search"
+              class="extension-search"
+              type="search"
+              placeholder="Search extensions..."
+              aria-label="Search extensions"
+              autocomplete="off"
+            >
+
+            <select
+              id="extension-filter"
+              class="extension-filter"
+              aria-label="Filter extensions by language"
+            >
+              <option value="all">All languages</option>
+            </select>
+          </div>
+
+          <p id="filter-results" class="filter-results"></p>
 
           <div id="extension-list" class="extension-list" aria-live="polite" aria-busy="true">
             <div class="loading-state">
