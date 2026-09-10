@@ -1,230 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <meta
-        name="description"
-        content="A unified extension directory for Cloudstream, Mihon, Aniyomi and more."
-    >
-
-    <meta
-        name="theme-color"
-        content="#0b0d10"
-    >
-
-    <title>Extension Hub</title>
-
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/repositories.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="A unified extension directory for Cloudstream, Mihon, Aniyomi and more.">
+  <meta name="theme-color" content="#0b0d10">
+  <title>Extension Hub</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/repositories.css">
 </head>
-
 <body>
-    <div class="app">
+  <div class="app">
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="./" aria-label="Extension Hub home">
+          <span class="brand-mark" aria-hidden="true">EH</span>
+          <span class="brand-text"><strong>Extension Hub</strong><small>Repositories & Extensions</small></span>
+        </a>
 
-        <header class="site-header">
-            <div class="container header-inner">
+        <nav class="site-nav" aria-label="Main navigation">
+          <a href="#repositories">Repositories</a>
+          <a href="#about">About</a>
+        </nav>
+      </div>
+    </header>
 
-                <a
-                    class="brand"
-                    href="./"
-                    aria-label="Extension Hub home"
-                >
-                    <span
-                        class="brand-mark"
-                        aria-hidden="true"
-                    >
-                        EH
-                    </span>
+    <main>
+      <section class="hero">
+        <div class="container hero-inner">
+          <div class="hero-copy">
+            <span class="eyebrow">Unified Extension Directory</span>
+            <h1>All your extensions, <span>in one place.</span></h1>
+            <p>Browse repositories for Cloudstream, Mihon, Aniyomi and more from a single clean interface.</p>
 
-                    <span class="brand-text">
-                        <strong>Extension Hub</strong>
-
-                        <small>
-                            Repositories & Extensions
-                        </small>
-                    </span>
-                </a>
-
-                <nav
-                    class="site-nav"
-                    aria-label="Main navigation"
-                >
-                    <a href="#repositories">
-                        Repositories
-                    </a>
-
-                    <a href="#about">
-                        About
-                    </a>
-                </nav>
-
+            <div class="hero-actions">
+              <a class="button button-primary" href="#repositories">Browse repositories</a>
+              <a class="button button-secondary" href="#about">Learn more</a>
             </div>
-        </header>
+          </div>
+        </div>
+      </section>
 
-        <main>
-
-            <section class="hero">
-                <div class="container hero-inner">
-
-                    <div class="hero-copy">
-
-                        <span class="eyebrow">
-                            Unified Extension Directory
-                        </span>
-
-                        <h1>
-                            All your extensions,
-                            <span>in one place.</span>
-                        </h1>
-
-                        <p>
-                            Browse repositories for Cloudstream, Mihon,
-                            Aniyomi and more from a single clean interface.
-                        </p>
-
-                        <div class="hero-actions">
-
-                            <a
-                                class="button button-primary"
-                                href="#repositories"
-                            >
-                                Browse repositories
-                            </a>
-
-                            <a
-                                class="button button-secondary"
-                                href="#about"
-                            >
-                                Learn more
-                            </a>
-
-                        </div>
-
-                    </div>
-
-                </div>
-            </section>
-
-            <section
-                id="repositories"
-                class="repositories-section"
-            >
-                <div class="container">
-
-                    <div class="section-heading">
-
-                        <div>
-                            <span class="eyebrow">
-                                Directory
-                            </span>
-
-                            <h2>
-                                Repositories
-                            </h2>
-                        </div>
-
-                        <p>
-                            Select a repository to explore its extensions.
-                        </p>
-
-                    </div>
-
-                    <div
-                        id="repository-list"
-                        class="repository-list"
-                        aria-live="polite"
-                        aria-busy="true"
-                    >
-                        <div class="repository-empty">
-                            <div>
-                                <h3>
-                                    Loading repositories
-                                </h3>
-
-                                <p>
-                                    Preparing the directory...
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </section>
-
-            <section
-                id="about"
-                class="about-section"
-            >
-                <div class="container about-inner">
-
-                    <span class="eyebrow">
-                        About
-                    </span>
-
-                    <h2>
-                        One directory.
-                        Multiple ecosystems.
-                    </h2>
-
-                    <p>
-                        Extension Hub is designed to make browsing and
-                        discovering extensions easier without requiring
-                        users to jump between different repositories.
-                    </p>
-
-                </div>
-            </section>
-
-        </main>
-
-        <footer class="site-footer">
-            <div class="container footer-inner">
-
-                <span>
-                    Extension Hub
-                </span>
-
-                <span>
-                    Built for GitHub Pages
-                </span>
-
+      <section id="repositories" class="repositories-section">
+        <div class="container">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">Directory</span>
+              <h2>Repositories</h2>
             </div>
-        </footer>
+            <p>Select a repository to explore its extensions.</p>
+          </div>
 
-    </div>
+          <div id="repository-list" class="repository-list" aria-live="polite" aria-busy="true">
+            <div class="repository-empty">
+              <div>
+                <h3>Loading repositories</h3>
+                <p>Preparing the directory...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-    <script src="data/repositories.js"></script>
-    <script src="js/app.js"></script>
-    <script src="js/repositories.js"></script>
+      <section id="about" class="about-section">
+        <div class="container about-inner">
+          <span class="eyebrow">About</span>
+          <h2>One directory. Multiple ecosystems.</h2>
+          <p>Extension Hub is designed to make browsing and discovering extensions easier without requiring users to jump between different repositories.</p>
+        </div>
+      </section>
+    </main>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const repositoryList =
-                document.querySelector("#repository-list");
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <span>Extension Hub</span>
+        <span>Built for GitHub Pages</span>
+      </div>
+    </footer>
+  </div>
 
-            if (
-                repositoryList &&
-                typeof RepositoryView !== "undefined" &&
-                typeof repositories !== "undefined"
-            ) {
-                RepositoryView.render(
-                    repositoryList,
-                    repositories
-                );
+  <script src="data/extensions.js"></script>
+  <script src="data/repositories.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/repositories.js"></script>
 
-                repositoryList.setAttribute(
-                    "aria-busy",
-                    "false"
-                );
-            }
-        });
-    </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const list = document.querySelector("#repository-list");
 
+      if (list && typeof RepositoryView !== "undefined" && typeof repositories !== "undefined") {
+        RepositoryView.render(list, repositories);
+        list.setAttribute("aria-busy", "false");
+      }
+    });
+  </script>
 </body>
 </html>
