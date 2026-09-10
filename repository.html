@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/repositories.css">
   <link rel="stylesheet" href="css/repository.css">
+  <link rel="stylesheet" href="css/loading.css">
 </head>
 <body>
   <div class="app">
@@ -43,7 +44,14 @@
             <p id="extension-summary">Loading extensions...</p>
           </div>
 
-          <div id="extension-list" class="extension-list" aria-live="polite" aria-busy="true"></div>
+          <div id="extension-list" class="extension-list" aria-live="polite" aria-busy="true">
+            <div class="loading-state">
+              <div>
+                <div class="loading-spinner" aria-hidden="true"></div>
+                <p>Loading extensions...</p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </main>
